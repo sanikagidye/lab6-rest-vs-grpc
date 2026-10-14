@@ -14,7 +14,7 @@ import argparse
 def doRawImage(addr, debug=False):
 
     # prepare headers for http request
-    headers = {'content-type': 'image/png'}
+    headers = {'content-type': 'image/jpeg'}
 
     img = open('Flatirons_Winter_Sunrise_edit_2.jpg', 'rb').read()
 
@@ -41,11 +41,59 @@ def doAdd(addr, debug=False):
 
 
 def doDotProduct(addr, debug=False):
-    pass
+
+    headers = {'content-type': 'application/json'}
+
+
+    a = [random.random() for _ in range(100)]
+    b = [random.random() for _ in range(100)]
+
+    payload = {
+        'a': a,
+        'b': b
+    }
+
+    dot_url = addr + '/api/dotproduct'
+
+    response = requests.post(
+        dot_url,
+        json=payload,
+        headers=headers
+    )
+
+    if debug:
+        print("Response is", response)
+        print(json.loads(response.text))
 
 
 def doJsonImage(addr, debug=False):
-    pass
+
+    headers = {'content-type': 'application/json'}
+
+    # Read image as binary
+    img = open(
+        'Flatirons_Winter_Sunrise_edit_2.jpg',
+        'rb'
+    ).read()
+
+    # Convert binary image to Base64 text
+    encoded_image = base64.b64encode(img).decode('utf-8')
+
+    payload = {
+        'image': encoded_image
+    }
+
+    image_url = addr + '/api/jsonimage'
+
+    response = requests.post(
+        image_url,
+        json=payload,
+        headers=headers
+    )
+
+    if debug:
+        print("Response is", response)
+        print(json.loads(response.text))
 
 
 # ---------------------------------------------------------

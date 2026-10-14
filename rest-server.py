@@ -51,12 +51,63 @@ def rawimage():
 
 @app.route('/api/dotproduct', methods=['POST'])
 def dotproduct():
-    pass
+    data = request.get_json()
+
+    a = data['a']
+    b = data['b']
+
+    if len(a) != len(b):
+        response = {'error': 'Vectors must have the same length'}
+        return Response(
+            response=jsonpickle.encode(response),
+            status=400,
+            mimetype='application/json'
+        )
+
+    result = sum(x * y for x, y in zip(a, b))
+
+    response = {'dotproduct': result}
+
+    return Response(
+        response=jsonpickle.encode(response),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @app.route('/api/jsonimage', methods=['POST'])
 def jsonimage():
-    pass
+    import base64
+
+    try:
+        data = request.get_json()
+
+        # Get Base64 string from JSON
+        image_string = data['image']
+
+        # Convert Base64 string back to binary image
+        image_bytes = base64.b64decode(image_string)
+
+        # Open image using Pillow
+        ioBuffer = io.BytesIO(image_bytes)
+        img = Image.open(ioBuffer)
+
+        response = {
+            'width': img.size[0],
+            'height': img.size[1]
+        }
+
+    except Exception as e:
+        response = {
+            'width': 0,
+            'height': 0
+        }
+
+    return Response(
+        response=jsonpickle.encode(response),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 if __name__ == '__main__':
